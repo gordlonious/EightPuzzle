@@ -1,11 +1,11 @@
-
+import edu.princeton.cs.algs4.Inversions;
 /**
  *
  * @author Gordon Portzline
  */
 public class Board {
     private int[][] board;
-    private int n;
+    private final int n;
     public Board(int[][] blocks) {
         this.board = blocks;
         this.n = blocks[0].length;
@@ -13,6 +13,47 @@ public class Board {
     public int size() {
         return this.n;
     }
+    
+    public boolean isSolvable() {
+        boolean s = false;
+        int numOfInversions = (int) Inversions.count(Board.flattenArray(board));
+        int rowOfBlank = -1;
+        outerLoop:
+        for(int i = 0; i < board.length; i++) {
+            for(int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    rowOfBlank = i;
+                    break outerLoop;
+                }
+            }
+        }
+        if(rowOfBlank == -1) throw new InvalidBoardState("the blank tile was never found, isSolvable() has failed");
+        if(this.n % 2 != 0 && numOfInversions % 2 != 0) {
+            return false;
+        } else if (this.n % 2 == 0 && (numOfInversions+rowOfBlank) % 2 == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    private static int[] flattenArray(int[][] a) {
+        int flatLength = 0;
+        for(int i = 0; i < a.length; i++) {
+            flatLength += a[i].length;
+        }
+        int[] flatArray = new int[flatLength];
+        
+        int flatIndex = 0;
+        for(int i = 0; i < a.length; i++) { // copy
+            for (int j = 0; j < a[i].length; j++) {
+                flatArray[flatIndex] = a[i][j];
+                flatIndex++;
+            }
+        }
+        return flatArray;
+    }
+    
     public int manhattan() {
         int manhattanSum = 0;
         for(int i = 0; i < this.n; i++) {
@@ -72,7 +113,7 @@ public class Board {
         else if(val <= this.n*3 && val > this.n*2) { // third row
             col = 2;
         }
-        else throw new IllegalArgumentException("getygoal() failed");
+        else throw new IllegalArgumentException("getygoal() failed, this method isn't finished and you should probably fix it");
         
         return col;
     }
@@ -87,6 +128,12 @@ public class Board {
     
     private int getManhattanValue(int val, int x, int y) {
         return getxman(getxgoal(val), y) + getyman(getygoal(val), x);
+    }
+    
+      private class InvalidBoardState extends Error {
+      public InvalidBoardState(String message){
+         super(message);
+      }
     }
     
     public static void main(String[] args) {
@@ -128,5 +175,12 @@ public class Board {
         Board exampleBoard = new Board(new int[][] { {8, 1, 3}, {4, 0, 2}, {7, 6, 5} });
         System.out.printf("Hamming for exampleBoard should be 5, actual is %d%n", exampleBoard.hamming());
         System.out.printf("Manhattan for exampleBoard should be 10, actual is %d%n", exampleBoard.manhattan());
+        
+        int[][] t1a = new int[][] { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+        int[] f1a = Board.flattenArray(t1a);
+        for(int f : f1a ) System.out.printf("%d, ", f);
+        
+        final Board unsolvable1 = new Board(new int[][] { {1, 2, 3}, {4, 5, 6}, {8, 7, 0} });
+        System.out.printf("%nthe board should not be solvable, isSolvable actually is: %b%n", unsolvable1.isSolvable());
     }
 }
