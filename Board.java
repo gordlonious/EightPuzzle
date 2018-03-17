@@ -14,6 +14,19 @@ public class Board {
         return this.n;
     }
     
+    public boolean isGoal() {
+// // Can I get better performance by using a series of checks to detect the goal board?
+//        for(int i = 0; i < board.length; i++) {
+//            for(int j = 0; j < board[i].length; j++) {
+//                // check for tile out of position in row
+//                // check for blank tile that is not in the last position
+//                if ((i != (board.length - 1)) && j != (board[(this.n-1)].length - 1) && board[i][j] == 0) return false;
+//            }
+//        }
+//        return true;
+        return (int) Inversions.count(Board.flattenArray(board)) == 0;
+    }
+    
     public boolean isSolvable() {
         boolean s = false;
         int numOfInversions = (int) Inversions.count(Board.flattenArray(board));
@@ -37,8 +50,9 @@ public class Board {
         }
     }
     
+    // returns a 1d array given a 2d array and removes the blank tile (0)
     private static int[] flattenArray(int[][] a) {
-        int flatLength = 0;
+        int flatLength = -1;
         for(int i = 0; i < a.length; i++) {
             flatLength += a[i].length;
         }
@@ -47,7 +61,7 @@ public class Board {
         int flatIndex = 0;
         for(int i = 0; i < a.length; i++) { // copy
             for (int j = 0; j < a[i].length; j++) {
-                flatArray[flatIndex] = a[i][j];
+                if(a[i][j] != 0)  flatArray[flatIndex] = a[i][j];
                 flatIndex++;
             }
         }
@@ -182,5 +196,8 @@ public class Board {
         
         final Board unsolvable1 = new Board(new int[][] { {1, 2, 3}, {4, 5, 6}, {8, 7, 0} });
         System.out.printf("%nthe board should not be solvable, isSolvable actually is: %b%n", unsolvable1.isSolvable());
+        
+        System.out.printf("An unsolvable board is not a goal board, isGoal returns %b%n", unsolvable1.isGoal());
+        System.out.printf("A goal board is a goal board, isGoal returns %b%n", goalBoard.isGoal());
     }
 }
