@@ -109,8 +109,9 @@ public class Board {
             for (int j = 0; j < this.n; j++) {
 //                if(j == 0)  System.out.printf("%n%d ", board[i][j]);
 //                else System.out.printf("%d ", board[i][j]);
-                  if(j == 0) s.concat(String.format("\n%d ", board[i][j]));
-                  else s.concat(String.format("%d ", board[i][j]));
+                  String sf = String.format("\n%d ", board[i][j]);
+                  if(j == 0) s = s.concat(String.format("\n%d ", board[i][j]));
+                  else s = s.concat(String.format("%d ", board[i][j]));
             }
         }
         return s;
@@ -143,7 +144,7 @@ public class Board {
         for(int i = 0; i < a.length; i++) { // copy
             for (int j = 0; j < a[i].length; j++) {
                 if(a[i][j] != 0)  flatArray[flatIndex] = a[i][j];
-                flatIndex++;
+                if(a[i][j] != 0) flatIndex++;
             }
         }
         return flatArray;
