@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Inversions;
+import java.util.ArrayList;
 /**
  *
  * @author Gordon Portzline
@@ -47,6 +48,45 @@ public class Board {
             return false;
         } else {
             return true;
+        }
+    }
+    
+    public Iterable<Board> neighbors() {
+        final int maxMoves = 4;
+        boolean right, left, up, down;
+        ArrayList n = new ArrayList();
+        Board rightBoard = null;
+        Board leftBoard = null;
+        Board upBoard = null;
+        Board downBoard = null;
+        for (int i = 0; i < this.n; i++) {
+            for(int j = 0; j < this.n; j++) {
+                if(board[i][j] == 0) {
+                    // find legal moves
+                    if(j < (this.n-1)) {
+                        // right = true
+                        board[i][(j)] = board[i][(j+1)];
+                        rightBoard = new Board(board);
+                        board[i][(j+1)] = 0; // put board back to its own state
+                    }
+                    if(j > 0) {
+                        // left = true
+                        board[i][(j-1)] = board[i][j];
+                        leftBoard = new Board(board);
+                        board[i][(j-1)] = 0;
+                    }
+                    if(i < (this.n-1)) {
+                        // down = true
+                        board[i][j] = board[(i+1)][j];
+                        downBoard = new Board(board);
+                    }
+                    if(i > 0) {
+                        // up = true
+                        board[i][j] = board[(i-1)][j];
+                        upBoard = new Board(board);
+                    }
+                }
+            }
         }
     }
     
