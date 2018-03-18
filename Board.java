@@ -52,9 +52,12 @@ public class Board {
     }
     
     public Iterable<Board> neighbors() {
-        final int maxMoves = 4;
         boolean right, left, up, down;
-        ArrayList n = new ArrayList();
+        int[][] leftcopy = boardCopy();
+        int[][] rightcopy = boardCopy();
+        int[][] upcopy = boardCopy();
+        int[][] downcopy = boardCopy();
+        
         Board rightBoard = null;
         Board leftBoard = null;
         Board upBoard = null;
@@ -65,30 +68,68 @@ public class Board {
                     // find legal moves
                     if(j < (this.n-1)) {
                         // right = true
-                        board[i][(j)] = board[i][(j+1)];
-                        rightBoard = new Board(board);
-                        board[i][(j+1)] = 0; // put board back to its own state
+                        rightcopy[i][j] = board[i][(j+1)];
+                        rightBoard = new Board(leftcopy);
                     }
                     if(j > 0) {
                         // left = true
-                        board[i][(j-1)] = board[i][j];
+                        leftcopy[i][j] = board[i][(j-1)];
                         leftBoard = new Board(board);
-                        board[i][(j-1)] = 0;
                     }
                     if(i < (this.n-1)) {
                         // down = true
-                        board[i][j] = board[(i+1)][j];
+                        downcopy[i][j] = board[(i+1)][j];
                         downBoard = new Board(board);
                     }
                     if(i > 0) {
                         // up = true
-                        board[i][j] = board[(i-1)][j];
+                        upcopy[i][j] = board[(i-1)][j];
                         upBoard = new Board(board);
                     }
                 }
             }
         }
+//        int neighborCount = 0;
+//        if(rightBoard != null) neighborCount++;
+//        if(leftBoard != null) neighborCount++;
+//        if(upBoard != null) neighborCount++;
+//        if(downBoard != null) neighborCount++;
+        ArrayList<Board> a = new ArrayList();
+        if(rightBoard != null) a.add(rightBoard);
+        if(leftBoard != null) a.add(leftBoard);
+        if(upBoard != null) a.add(upBoard);
+        if(downBoard != null) a.add(downBoard);
+        return a;
     }
+    
+    @Override
+    public String toString() {
+        String s = "";
+        for(int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+//                if(j == 0)  System.out.printf("%n%d ", board[i][j]);
+//                else System.out.printf("%d ", board[i][j]);
+                  if(j == 0) s.concat(String.format("\n%d ", board[i][j]));
+                  else s.concat(String.format("%d ", board[i][j]));
+            }
+        }
+        return s;
+    }
+    
+    private int[][] boardCopy() {
+        int[][] boardcopy = new int[this.n][this.n];
+        for(int i = 0; i < this.n; i++) {
+            for(int j = 0; j < this.n; j++) {
+                boardcopy[i][j] = board[i][j];
+            }
+        }
+        return boardcopy;
+    }
+    
+//    private static tileSwap(int[][] board, int row, int col, int row2, int col2) {
+//        int temp = board[row][col];
+//        board[]
+//    }
     
     // returns a 1d array given a 2d array and removes the blank tile (0)
     private static int[] flattenArray(int[][] a) {
@@ -239,5 +280,8 @@ public class Board {
         
         System.out.printf("An unsolvable board is not a goal board, isGoal returns %b%n", unsolvable1.isGoal());
         System.out.printf("A goal board is a goal board, isGoal returns %b%n", goalBoard.isGoal());
+        
+        System.out.printf("goal board looks like..%n");
+        System.out.println(goalBoard.toString());
     }
 }
