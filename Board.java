@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * @author Gordon Portzline
  */
 public class Board {
-    private int[][] board;
+    private final int[][] board;
     private final int n;
     public Board(int[][] blocks) {
         this.board = blocks;
@@ -232,6 +232,15 @@ public class Board {
       }
     }
     
+//    private boolean isNeighborTest() {
+//        boolean isNeightbor = false;
+//        for (int i = 0; i < this.n; i++) {
+//            for (int j = 0; j < this.n; j++) {
+//                if(board[i][j] == board[(j+1)])
+//            }
+//        }
+//    }
+    
     public static void main(String[] args) {
         Board goalBoard = new Board( new int[][] { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} } );
         System.out.printf("size should equal 3, size is actually %d%n", goalBoard.size());
@@ -284,5 +293,6 @@ public class Board {
         
         System.out.printf("goal board looks like..%n");
         System.out.println(goalBoard.toString());
+        System.out.printf("insolvable1 looks like.. %s", unsolvable1.toString());
     }
 }
