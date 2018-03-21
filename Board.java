@@ -25,7 +25,7 @@ public class Board {
 //            }
 //        }
 //        return true;
-        return (int) Inversions.count(Board.flattenArray(board)) == 0;
+        return (int) Inversions.count(Board.flattenArray(board)) == 0 && board[(this.n-1)][(this.n-1)] == 0;
     }
     
     public boolean isSolvable() {
@@ -103,15 +103,26 @@ public class Board {
     }
     
     @Override
-    public String toString() {
-        String s = "";
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(o == null) return false;
+        if(o.getClass() != this.getClass()) return false;
+        Board ob = (Board) o;
         for(int i = 0; i < this.n; i++) {
             for (int j = 0; j < this.n; j++) {
-//                if(j == 0)  System.out.printf("%n%d ", board[i][j]);
-//                else System.out.printf("%d ", board[i][j]);
-                  String sf = String.format("\n%d ", board[i][j]);
-                  if(j == 0) s = s.concat(String.format("\n%d ", board[i][j]));
-                  else s = s.concat(String.format("%d ", board[i][j]));
+                if(board[i][j] != ob.board[i][j]) return false;
+            }
+        }
+        return true;
+    }
+    
+    @Override
+    public String toString() {
+        String s = String.format("\n%d", this.n);
+        for(int i = 0; i < this.n; i++) {
+            for (int j = 0; j < this.n; j++) {
+                  if(j == 0) s = s.concat(String.format("\n %d ", board[i][j]));
+                  else s = s.concat(String.format(" %d ", board[i][j]));
             }
         }
         return s;
@@ -232,13 +243,10 @@ public class Board {
       }
     }
     
-//    private boolean isNeighborTest() {
-//        boolean isNeightbor = false;
-//        for (int i = 0; i < this.n; i++) {
-//            for (int j = 0; j < this.n; j++) {
-//                if(board[i][j] == board[(j+1)])
-//            }
-//        }
+//    private boolean isNeighborTest(int blankx, int blanky) {
+//        boolean isupneighbor, isdownneighbor, isrightneighbor, isleftneighbor;
+//        //check up
+//        
 //    }
     
     public static void main(String[] args) {
@@ -288,11 +296,21 @@ public class Board {
         final Board unsolvable1 = new Board(new int[][] { {1, 2, 3}, {4, 5, 6}, {8, 7, 0} });
         System.out.printf("%nthe board should not be solvable, isSolvable actually is: %b%n", unsolvable1.isSolvable());
         
+        final Board zeroInMiddle = new Board(new int[][] { {2, 1, 3}, {0, 5, 6}, {7, 8, 4} });
         System.out.printf("An unsolvable board is not a goal board, isGoal returns %b%n", unsolvable1.isGoal());
         System.out.printf("A goal board is a goal board, isGoal returns %b%n", goalBoard.isGoal());
+        System.out.printf("A board with the blank tile not at (n, n) is not a goal board, isGoal returns %b%n", zeroInMiddle.isGoal());
         
         System.out.printf("goal board looks like..%n");
         System.out.println(goalBoard.toString());
         System.out.printf("insolvable1 looks like.. %s", unsolvable1.toString());
+        
+        final Board equals1 = new Board(new int[][] { {1, 3, 5}, {2, 4, 6}, {7, 8, 0} });
+        final Board equals2 = new Board(new int[][] { {1, 3, 5}, {2, 4, 6}, {7, 8, 0} });
+        System.out.printf("%nTwo boards with the same tile configuration should be equal, equals returns %b, %b%n", equals1.equals(equals2), equals2.equals(equals1));
+        
+        final Board equals3 = new Board(new int[][] { {0, 3, 5}, {2, 4, 6}, {7, 8, 1} });
+        final Board equals4 = new Board(new int[][] { {1, 3, 5}, {2, 4, 6}, {7, 8, 0} });
+        System.out.printf("Two boards with just one tile set differently should not be equal, equals returns %b, %b%n", equals3.equals(equals4), equals4.equals(equals3));
     }
 }
