@@ -62,6 +62,7 @@ public class Board {
         Board leftBoard = null;
         Board upBoard = null;
         Board downBoard = null;
+        outer:
         for (int i = 0; i < this.n; i++) {
             for(int j = 0; j < this.n; j++) {
                 if(board[i][j] == 0) {
@@ -69,31 +70,31 @@ public class Board {
                     if(j < (this.n-1)) {
                         // right = true
                         rightcopy[i][j] = board[i][(j+1)];
-                        rightBoard = new Board(leftcopy);
+                        rightcopy[i][(j+1)] = 0;
+                        rightBoard = new Board(rightcopy);
                     }
                     if(j > 0) {
                         // left = true
                         leftcopy[i][j] = board[i][(j-1)];
-                        leftBoard = new Board(board);
+                        leftcopy[i][(j-1)] = 0;
+                        leftBoard = new Board(leftcopy);
                     }
                     if(i < (this.n-1)) {
                         // down = true
                         downcopy[i][j] = board[(i+1)][j];
-                        downBoard = new Board(board);
+                        downcopy[(i+1)][j] = 0;
+                        downBoard = new Board(downcopy);
                     }
                     if(i > 0) {
                         // up = true
                         upcopy[i][j] = board[(i-1)][j];
-                        upBoard = new Board(board);
+                        upcopy[(i-1)][j] = 0;
+                        upBoard = new Board(upcopy);
                     }
+                    break outer;
                 }
             }
         }
-//        int neighborCount = 0;
-//        if(rightBoard != null) neighborCount++;
-//        if(leftBoard != null) neighborCount++;
-//        if(upBoard != null) neighborCount++;
-//        if(downBoard != null) neighborCount++;
         ArrayList<Board> a = new ArrayList();
         if(rightBoard != null) a.add(rightBoard);
         if(leftBoard != null) a.add(leftBoard);
@@ -243,10 +244,11 @@ public class Board {
       }
     }
     
-//    private boolean isNeighborTest(int blankx, int blanky) {
+//    private boolean isNeighborTest(int blankx, int blanky, Board neighbor) {
 //        boolean isupneighbor, isdownneighbor, isrightneighbor, isleftneighbor;
+//        int[][] bCopy = boardCopy();
 //        //check up
-//        
+//        if()
 //    }
     
     public static void main(String[] args) {
@@ -312,5 +314,16 @@ public class Board {
         final Board equals3 = new Board(new int[][] { {0, 3, 5}, {2, 4, 6}, {7, 8, 1} });
         final Board equals4 = new Board(new int[][] { {1, 3, 5}, {2, 4, 6}, {7, 8, 0} });
         System.out.printf("Two boards with just one tile set differently should not be equal, equals returns %b, %b%n", equals3.equals(equals4), equals4.equals(equals3));
+        
+        final Board nodeExample1 = new Board(new int[][] { {8, 1, 3}, {4, 2, 0}, {7, 6, 5} });
+        final Board neighbor1 = new Board(new int[][] { {8, 1, 0}, {4, 2, 3}, {7, 6, 5} });
+        final Board neighbor2 = new Board(new int[][] { {8, 1, 3}, {4, 0, 2}, {7, 6, 5} });
+        final Board neighbor3 = new Board(new int[][] { {8, 1, 3}, {4, 2, 5}, {7, 6, 0} });
+        System.out.printf("Initial board:%s%n", nodeExample1.toString());
+        System.out.printf("Inital board should have 3 neighbors that look like: %s%s%s", neighbor1.toString(), neighbor2.toString(), neighbor3.toString());
+        System.out.printf("%nActual neighbors look like:");
+        for(Board b : nodeExample1.neighbors()) {
+            System.out.printf("%s", b.toString());
+        }
     }
 }
