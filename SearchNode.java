@@ -25,9 +25,10 @@ public class SearchNode implements Comparable<SearchNode> {
         children = new ArrayList<>();
         board = b;
         parent = p;
+        priority = board.manhattan() + moves;
     }
     
-    public void setChildren(ArrayList<Board> c, int moves, SearchNode p) {
+    public void setChildren(Iterable<Board> c, int moves, SearchNode p) {
         for(Board b : c) {
             SearchNode sn = new SearchNode(b, moves, p);
             children.add(sn);
@@ -41,5 +42,21 @@ public class SearchNode implements Comparable<SearchNode> {
     @Override
     public int compareTo(SearchNode sn) {
         return priority.compareTo(sn.priority);
+    }
+    
+    @Override
+    public String toString() {
+        return board.toString();
+    }
+    
+    public static void main(String[] args) {
+        Board ib = new Board(new int[][] { { 0, 1, 3 }, { 4, 2, 5 }, {7, 8, 6} });
+        SearchNode sn = new SearchNode(ib, 0);
+        Iterable<Board> initNeighbors = ib.neighbors();
+        sn.setChildren(initNeighbors, 1, sn);
+        System.out.println("Children are...");
+        for(SearchNode s : sn.children) {
+            System.out.printf("%s", s.toString());
+        }
     }
 }
