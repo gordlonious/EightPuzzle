@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class SearchNode implements Comparable<SearchNode> {
     private Integer priority;
-    private Board board;
+    public Board board;
     private SearchNode parent;
     private ArrayList<SearchNode> children;
     private boolean onGoalPath = false;
@@ -28,11 +28,12 @@ public class SearchNode implements Comparable<SearchNode> {
         priority = board.manhattan() + moves;
     }
     
-    public void setChildren(Iterable<Board> c, int moves, SearchNode p) {
+    public void setChildren(Iterable<Board> c, int moves) {
         for(Board b : c) {
-            SearchNode sn = new SearchNode(b, moves, p);
+            SearchNode sn = new SearchNode(b, moves, this);
             children.add(sn);
         }
+        parent = this;
     }
     
     public void flagAsLowestPriorityChild() {
@@ -53,7 +54,7 @@ public class SearchNode implements Comparable<SearchNode> {
         Board ib = new Board(new int[][] { { 0, 1, 3 }, { 4, 2, 5 }, {7, 8, 6} });
         SearchNode sn = new SearchNode(ib, 0);
         Iterable<Board> initNeighbors = ib.neighbors();
-        sn.setChildren(initNeighbors, 1, sn);
+        sn.setChildren(initNeighbors, 1);
         System.out.println("Children are...");
         for(SearchNode s : sn.children) {
             System.out.printf("%s", s.toString());
