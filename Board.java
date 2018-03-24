@@ -138,12 +138,7 @@ public class Board {
         }
         return boardcopy;
     }
-    
-//    private static tileSwap(int[][] board, int row, int col, int row2, int col2) {
-//        int temp = board[row][col];
-//        board[]
-//    }
-    
+       
     // returns a 1d array given a 2d array and removes the blank tile (0)
     private static int[] flattenArray(int[][] a) {
         int flatLength = -1;
@@ -173,32 +168,18 @@ public class Board {
         }
         return manhattanSum;  // still need to add how many moves leading to this board
     }
-    
-    // method only works for 3 x 3 board
+      
     public int hamming() {
-        int h = 0;
-        int pad;
-        for(int i = 0; i < this.n; i++) {
-            switch(i) {
-                case 0:
-                    pad = 1;
-                    break;
-                case 1:
-                    pad = 4;
-                    break;
-                case 2:
-                    pad = 7;
-                    break;
-                default:
-                    throw new IllegalArgumentException("something went wrong in hamming()");
-            }
-            for(int j = 0; j < this.n; j++) {
-                if(board[i][j] == 0) continue;
-                if(board[i][j] != (j+pad)) h++;
+        int count = 0;
+        for(int row = 0; row < board.length; row++) {
+            for(int col = 0; col < board.length; col++) {
+                if(board[row][col] != row * board.length + col + 1) {
+                if(board[row][col] != 0 ) count++;
             }
         }
-        return h; // still need to add how many moves it took to get here..
     }
+    return count;
+} 
     
     // val: tile value of the given NPuzzle board
     private int getxgoal(int val) {
@@ -208,22 +189,10 @@ public class Board {
     
     // method only works for 3 x 3 board
     private int getygoal(int val) {
-        int col;
-        if(val == 0) { // blank tile
-            col = 2;
-        }
-        else if(val <= this.n) { // top row
-            col = 0;
-        }
-        else if(val <= this.n*2 && val > this.n) { // second row
-            col = 1;
-        }
-        else if(val <= this.n*3 && val > this.n*2) { // third row
-            col = 2;
-        }
-        else throw new IllegalArgumentException("getygoal() failed, this method isn't finished and you should probably fix it");
-        
-        return col;
+        if(val == 0) return (this.n - 1);
+        int divide = val / this.n;
+        if(val % this.n == 0) divide--;
+        return divide;
     }
     
     private int getxman(int xgoal, int col) {
@@ -243,14 +212,7 @@ public class Board {
          super(message);
       }
     }
-    
-//    private boolean isNeighborTest(int blankx, int blanky, Board neighbor) {
-//        boolean isupneighbor, isdownneighbor, isrightneighbor, isleftneighbor;
-//        int[][] bCopy = boardCopy();
-//        //check up
-//        if()
-//    }
-    
+       
     public static void main(String[] args) {
         Board goalBoard = new Board( new int[][] { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} } );
         System.out.printf("size should equal 3, size is actually %d%n", goalBoard.size());
