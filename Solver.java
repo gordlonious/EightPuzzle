@@ -1,4 +1,6 @@
+import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.StdOut;
 import java.util.ArrayList;
 /**
  *
@@ -6,17 +8,21 @@ import java.util.ArrayList;
  */
 public class Solver {
     private Board initialBoard;
-    private int mvs;
+    private Integer mvs;
     public Solver(Board b) {
         if(b == null) throw new NullPointerException();
         if(!b.isSolvable()) throw new IllegalArgumentException("Inital board cannot be unsolvable");
         initialBoard = b;
+        mvs = null;
     }
     
-    public int moves() { return mvs; }
+    public int moves() {
+        if(mvs != null) return mvs;
+        else throw new NullPointerException("Please execute solution() method before executing moves() method");
+    }
     
     public Iterable<Board> solution() {
-        // I need to loop through similar operations until I have a 'full goal path'
+        // Initialize types and structs needed for solving the board
         MinPQ<SearchNode> pq = new MinPQ<>();
         SearchNode gameTree = new SearchNode(initialBoard, 0);
         Iterable<Board> neighbors = initialBoard.neighbors();
@@ -25,6 +31,7 @@ public class Solver {
         ArrayList<Board> goalPath = new ArrayList<>();
         goalPath.add(initialBoard);
         
+        // iteratively evaluate neighbors, build the game tree, and mark the optimal path using MinPQ
         SearchNode p = gameTree;
         while(!p.board.isGoal()) {
             // add children
@@ -52,6 +59,29 @@ public class Solver {
     }
     
     public static void main(String[] args) {
-        testSolver();
+        // create initial board from file
+        if(args.length > 0 && !args[0].equals("")) {
+            In in = new In(args[0]);
+            int N = in.readInt();
+            int[][] blocks = new int[N][N];
+            for (int i = 0; i < N; i++)
+                for (int j = 0; j < N; j++)
+                    blocks[i][j] = in.readInt();
+            Board initial = new Board(blocks);
+
+            // check if puzzle is solvable; if so, solve it and output solution
+            if (initial.isSolvable()) {
+                Solver solver = new Solver(initial);
+                StdOut.println("Minimum number of moves = " + solver.moves());
+                for (Board board : solver.solution())
+                    StdOut.println(board);
+            }
+
+            // if not, report unsolvable
+            else {
+                StdOut.println("Unsolvable puzzle");
+            }
+        }
+        else { testSolver(); }
     }
 }

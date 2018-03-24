@@ -6,10 +6,10 @@ import java.util.ArrayList;
  * @author gordl
  */
 public class SearchNode implements Comparable<SearchNode> {
-    private Integer priority;
+    private final Integer priority;
     public Board board;
     private SearchNode parent;
-    private ArrayList<SearchNode> children;
+    private final ArrayList<SearchNode> children;
     private boolean onGoalPath = false;
     
     // Board b is assumed to be the initial-board/root node
