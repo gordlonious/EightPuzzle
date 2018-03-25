@@ -37,7 +37,9 @@ public class Solver {
         while(!p.board.isGoal()) {
             // add children
             for(Board b : neighbors) {
-                pq.insert(new SearchNode(b, m, p)); // assert parent is not null
+                if(!b.equals(p.board)) { // critical optimization
+                    pq.insert(new SearchNode(b, m, p)); // assert parent is not null
+                }
             }
             SearchNode lowestPriorityNode = pq.delMin();
             lowestPriorityNode.flagAsLowestPriorityChild();
