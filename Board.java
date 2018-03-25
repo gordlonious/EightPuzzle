@@ -7,10 +7,21 @@ import java.util.ArrayList;
 public class Board {
     private final int[][] board;
     private final int n;
+    private int blanki;
+    private int blankj;
     public Board(int[][] blocks) {
         this.board = blocks;
         this.n = blocks[0].length;
+        for (int i = 0; i < this.n; i++) {
+            for(int j = 0; j < this.n; j++) {
+                if(board[i][j] == 0) {
+                    blanki = i;
+                    blankj = j;
+                }
+            }
+        }
     }
+    
     public int size() {
         return this.n;
     }
@@ -31,20 +42,11 @@ public class Board {
     public boolean isSolvable() {
         boolean s = false;
         int numOfInversions = (int) Inversions.count(Board.flattenArray(board));
-        int rowOfBlank = -1;
-        outerLoop:
-        for(int i = 0; i < board.length; i++) {
-            for(int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == 0) {
-                    rowOfBlank = i;
-                    break outerLoop;
-                }
-            }
-        }
-        if(rowOfBlank == -1) throw new InvalidBoardState("the blank tile was never found, isSolvable() has failed");
+        
+        if(blanki == -1) throw new InvalidBoardState("the blank tile was never found, isSolvable() has failed");
         if(this.n % 2 != 0 && numOfInversions % 2 != 0) {
             return false;
-        } else if (this.n % 2 == 0 && (numOfInversions+rowOfBlank) % 2 == 0) {
+        } else if (this.n % 2 == 0 && (numOfInversions+blanki) % 2 == 0) {
             return false;
         } else {
             return true;
@@ -52,49 +54,47 @@ public class Board {
     }
     
     public Iterable<Board> neighbors() {
-        boolean right, left, up, down;
-        int[][] leftcopy = boardCopy();
-        int[][] rightcopy = boardCopy();
-        int[][] upcopy = boardCopy();
-        int[][] downcopy = boardCopy();
+        boolean right = false, left = false, up = false, down = false;
+        if(blankj < (this.n-1)) right = true;
+        if(blankj > 0) left = true;
+        if(blanki < (this.n-1)) down = true;
+        if(blanki > 0) up = true;
+        
+        int[][] rightcopy;
+        int[][] leftcopy;
+        int[][] upcopy;
+        int[][] downcopy;
         
         Board rightBoard = null;
         Board leftBoard = null;
         Board upBoard = null;
         Board downBoard = null;
-        outer:
-        for (int i = 0; i < this.n; i++) {
-            for(int j = 0; j < this.n; j++) {
-                if(board[i][j] == 0) {
-                    // find legal moves
-                    if(j < (this.n-1)) {
-                        // right = true
-                        rightcopy[i][j] = board[i][(j+1)];
-                        rightcopy[i][(j+1)] = 0;
-                        rightBoard = new Board(rightcopy);
-                    }
-                    if(j > 0) {
-                        // left = true
-                        leftcopy[i][j] = board[i][(j-1)];
-                        leftcopy[i][(j-1)] = 0;
-                        leftBoard = new Board(leftcopy);
-                    }
-                    if(i < (this.n-1)) {
-                        // down = true
-                        downcopy[i][j] = board[(i+1)][j];
-                        downcopy[(i+1)][j] = 0;
-                        downBoard = new Board(downcopy);
-                    }
-                    if(i > 0) {
-                        // up = true
-                        upcopy[i][j] = board[(i-1)][j];
-                        upcopy[(i-1)][j] = 0;
-                        upBoard = new Board(upcopy);
-                    }
-                    break outer;
-                }
-            }
+        
+        if(right) {
+            rightcopy = boardCopy();
+            rightcopy[blanki][blankj] = board[blanki][(blankj+1)];
+            rightcopy[blanki][(blankj+1)] = 0;
+            rightBoard = new Board(rightcopy);
         }
+        if(left) {
+            leftcopy = boardCopy();
+            leftcopy[blanki][blankj] = board[blanki][(blankj-1)];
+            leftcopy[blanki][(blankj-1)] = 0;
+            leftBoard = new Board(leftcopy);
+        }
+        if(up) {
+            upcopy = boardCopy();
+            upcopy[blanki][blankj] = board[(blanki-1)][blankj];
+            upcopy[(blanki-1)][blankj] = 0;
+            upBoard = new Board(upcopy);
+        }
+        if(down) {
+            downcopy = boardCopy();
+            downcopy[blanki][blankj] = board[(blanki+1)][blankj];
+            downcopy[(blanki+1)][blankj] = 0;
+            downBoard = new Board(downcopy);   
+        }
+        
         ArrayList<Board> a = new ArrayList();
         if(rightBoard != null) a.add(rightBoard);
         if(leftBoard != null) a.add(leftBoard);
@@ -166,7 +166,7 @@ public class Board {
                 }
             }
         }
-        return manhattanSum;  // still need to add how many moves leading to this board
+        return manhattanSum;
     }
       
     public int hamming() {
@@ -181,13 +181,11 @@ public class Board {
     return count;
 } 
     
-    // val: tile value of the given NPuzzle board
     private int getxgoal(int val) {
         if(val % this.n == 0) return this.n - 1;
         else return (val % this.n) - 1;
     }
     
-    // method only works for 3 x 3 board
     private int getygoal(int val) {
         if(val == 0) return (this.n - 1);
         int divide = val / this.n;

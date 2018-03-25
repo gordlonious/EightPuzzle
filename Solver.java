@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Stopwatch;
 import java.util.ArrayList;
 /**
  *
@@ -70,13 +71,14 @@ public class Solver {
             Board initial = new Board(blocks);
 
             // check if puzzle is solvable; if so, solve it and output solution
+            Stopwatch watch = new Stopwatch();
             if (initial.isSolvable()) {
-                Solver solver = new Solver(initial);
-                StdOut.println("Minimum number of moves = " + solver.moves());
+                Solver solver = new Solver(initial);                
                 for (Board board : solver.solution())
                     StdOut.println(board);
+                StdOut.println("Minimum number of moves = " + solver.moves());
+                System.out.printf("calculating solution took: %fms%n", watch.elapsedTime());
             }
-
             // if not, report unsolvable
             else {
                 StdOut.println("Unsolvable puzzle");
